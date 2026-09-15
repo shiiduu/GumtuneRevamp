@@ -14,11 +14,10 @@ public class BlockAssistClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ConfigManager.load();
 
-		KeybindManager.register();
-
 		AutomationController automationController = new AutomationController();
 		ClientTickEvents.END_CLIENT_TICK.register(automationController::onClientTick);
 
+		KeybindManager.register(automationController);
 		HudRenderer.register(automationController);
 
 		BlockAssist.LOGGER.info("BlockAssist initialized");

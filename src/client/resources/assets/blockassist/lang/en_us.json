@@ -2,5 +2,6 @@
 	"key.blockassist.toggle_automation": "Toggle Automation",
 	"key.blockassist.toggle_crop_automation": "Toggle Crop Automation",
 	"key.blockassist.toggle_hud": "Toggle HUD",
+	"key.blockassist.open_config": "Open Configuration",
 	"key.category.blockassist.main": "BlockAssist"
 }

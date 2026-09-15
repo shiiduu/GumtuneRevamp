@@ -38,24 +38,30 @@ public final class InteractionController {
 		confirmationListener.onClientPredictedBreak(pos, previousState);
 	}
 
-	/** Validates the target is what's actually under the crosshair, then starts breaking it. */
-	public boolean start(BlockPos expectedPos) {
-		BlockHitResult hit = currentHitOn(expectedPos);
+	/**
+	 * Validates the target's position and face are what's actually under the
+	 * crosshair, then starts breaking it. Returns {@code false} both when the
+	 * target is rejected (e.g. protected block) and when the crosshair simply
+	 * hasn't caught up to the last rotation update yet - callers should treat
+	 * the latter as retryable rather than a hard failure.
+	 */
+	public boolean start(Target target) {
+		BlockHitResult hit = currentHitOn(target);
 		if (hit == null) {
 			return false;
 		}
 		MultiPlayerGameMode gameMode = Minecraft.getInstance().gameMode;
-		DebugLog.log("[INTERACTION] START {}", expectedPos);
-		return gameMode.startDestroyBlock(expectedPos, hit.getDirection());
+		DebugLog.log("[INTERACTION] START {} face={}", target.pos(), target.face());
+		return gameMode.startDestroyBlock(target.pos(), hit.getDirection());
 	}
 
-	public boolean continueBreaking(BlockPos expectedPos) {
-		BlockHitResult hit = currentHitOn(expectedPos);
+	public boolean continueBreaking(Target target) {
+		BlockHitResult hit = currentHitOn(target);
 		if (hit == null) {
 			return false;
 		}
 		MultiPlayerGameMode gameMode = Minecraft.getInstance().gameMode;
-		return gameMode.continueDestroyBlock(expectedPos, hit.getDirection());
+		return gameMode.continueDestroyBlock(target.pos(), hit.getDirection());
 	}
 
 	public void stop() {
@@ -72,12 +78,28 @@ public final class InteractionController {
 		stop();
 	}
 
-	private BlockHitResult currentHitOn(BlockPos expectedPos) {
+	/** True if the live crosshair is currently on the target's position (face is not required to match - used for retry/staleness checks). */
+	public boolean isAimedAtPosition(BlockPos pos) {
+		HitResult hit = Minecraft.getInstance().hitResult;
+		return hit instanceof BlockHitResult blockHit && blockHit.getBlockPos().equals(pos);
+	}
+
+	/**
+	 * Deliberately checks position only, not {@link Target#face()}: the face
+	 * we pre-selected is what the rotation aims at and what vanilla's
+	 * {@code direction} argument records for particles/the abort packet, but
+	 * it isn't authoritative for which block breaks (any face works). At
+	 * typical aim precision the live crosshair can legitimately resolve to a
+	 * different face of the same thin/small target block than the one we
+	 * picked; requiring an exact match here would reintroduce spurious
+	 * retries without changing what actually gets broken.
+	 */
+	private BlockHitResult currentHitOn(Target target) {
 		HitResult hit = Minecraft.getInstance().hitResult;
 		if (!(hit instanceof BlockHitResult blockHit)) {
 			return null;
 		}
-		if (!blockHit.getBlockPos().equals(expectedPos)) {
+		if (!blockHit.getBlockPos().equals(target.pos())) {
 			return null;
 		}
 		return blockHit;

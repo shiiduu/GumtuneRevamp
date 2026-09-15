@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "blockassist",
+	"version": "${version}",
+	"name": "BlockAssist",
+	"description": "Client-side gameplay automation and interaction-timing test mod for a privately operated Minecraft server.",
+	"authors": [
+		"WhiteMonster"
+	],
+	"contact": {},
+	"license": "ARR",
+	"icon": "assets/blockassist/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"com.example.blockassist.BlockAssist"
+		],
+		"client": [
+			"com.example.blockassist.client.BlockAssistClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

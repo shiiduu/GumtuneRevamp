@@ -1,0 +1,35 @@
+# gradle
+.gradle/
+build/
+out/
+classes/
+
+# eclipse
+*.launch
+
+# idea
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+.vscode/
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.classpath
+.project
+.settings/
+bin/
+
+# fabric
+run/
+
+# java
+hs_err_*.log
+replay_*.log
+
+# os
+.DS_Store
+Thumbs.db

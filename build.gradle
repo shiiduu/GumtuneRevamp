@@ -26,6 +26,15 @@ dependencies {
 
 	// Fabric API. This is technically optional, but the keybind API used here needs it.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// The pure-logic classes under test live in the client source set (this is a client-only mod).
+	testImplementation sourceSets.client.output
+	testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+	useJUnitPlatform()
 }
 
 processResources {
